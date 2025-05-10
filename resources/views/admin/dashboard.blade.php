@@ -16,17 +16,26 @@
                             <th scope="col">Name</th>
                             <th scope="col">Price</th>
                             <th scope="col">Qty</th>
+                            <th scope="col">sku</th>
                             <th scope="col">Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                        {{-- @foreach($products as $product)
+                       @foreach($products as $product)
                           <tr>
                             <th scope="row">{{ $loop->iteration }}</th>
-                            <td><img style="width: 100px !important;" src="{{ asset($product->image) }}" alt=""></td>
+                          
+                            <td>
+                              @if($product->image == null)
+                          <img style="width: 100px !important;" src="https://placehold.co/600x400" alt="product image">
+                            @else 
+                            <img style="width: 100px !important;" src="{{ asset($product->image) }}" alt="">    
+                            @endif                          
+                          </td>
                             <td>{{ $product->name }}</td>
                             <td>{{ $product->price }}</td>
                             <td>{{ $product->qty }}</td>
+                            <td>{{ $product->sku }}</td>
                             <td class="d-flex border-0">
                               <a href="{{ route('product.edit', $product->id) }}" class="btn btn-primary">edit</a>
                               <form action="{{ route('product.destroy', $product->id) }}" method="POST">
@@ -36,7 +45,7 @@
                               </form>
                             </td>
                           </tr>
-                          @endforeach --}}
+                          @endforeach 
                          
                         </tbody>
                       </table>

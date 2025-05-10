@@ -34,3 +34,17 @@
         </div>
     </body>
 </html>
+
+
+
+
+/*  <div class="form-group">
+                            <label for="" class="mt-2 mb-2">Color</label>
+                            <x-select-input  name="colors" >
+                            <x-slot name="option">
+                                @foreach ($colors as $color)
+                                    <option value="{{ $color->id }}">{{ $color->name }}</option>
+                                @endforeach
+                            </x-slot>
+                            </x-select-input>
+                        </div> */
