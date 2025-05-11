@@ -17,4 +17,5 @@ class CartPageController extends Controller
 
         return view('pages.cart' , compact('products'));
     }
+   
 }

@@ -1,6 +1,5 @@
-
 <x-app-layout>
-  <!--============================
+    <!--============================
         CART START
     =============================-->
     <section class="wsus__cart mt_170 pb_100">
@@ -27,7 +26,8 @@
                                     @foreach ($products as $product)
                                     <tr>
                                         <td class="pro_img">
-                                            <img src="{{ asset($product['image']) }}" alt="product" class="img-fluid w-100">
+                                            <img src="{{ asset($product['image']) }}" alt="product"
+                                                class="img-fluid w-100">
                                         </td>
 
                                         <td class="pro_name">
@@ -36,9 +36,11 @@
 
                                         <td class="pro_select">
                                             <div class="quentity_btn">
-                                                <button class="btn btn-danger"><i class="fal fa-minus"></i></button>
-                                                <input type="text" placeholder="1" value="{{ $product['qty'] }}" min="1">
-                                                <button class="btn btn-success"><i class="fal fa-plus"></i></button>
+                                                <button data-id="{{ $product['id'] }}" class="minus decrement"
+                                                    type="submit"><i class="far fa-minus"></i></button>
+                                                <input type="text" placeholder="01" value="{{ $product['qty'] }}" min="1" class="qty">
+                                                <button data-id="{{ $product['id'] }}" class="plus increment"
+                                                    type="submit"><i class="far fa-plus"></i></button>
                                             </div>
                                         </td>
 
@@ -47,10 +49,18 @@
                                         </td>
 
                                         <td class="pro_icon">
-                                            <a href="#"><i class="fal fa-times"></i></a>
+                                            <form action="{{ route('remove-from-cart', $product['id']) }}"
+                                                method="POST">
+                                                <button class="submit">
+                                                    @csrf
+                                                    @method("DELETE")
+                                                    <i class="fal fa-times"></i>
+                                                </button>
+                                            </form>
+
                                         </td>
                                     </tr>
-                                 @endforeach
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -92,59 +102,63 @@
 
 
     <x-slot name="scripts">
-    <script>
-            $(document).ready(function() {
-                $(".add-to-cart").on("click", function(e) {
-                    e.preventDefault();
-                    let id = $(this).data('id');
-                    let color = $('.color').val();
-                    let qty = $('.qty').val();
-                   $.ajax({
+        <script>
+        $(document).ready(function() {
+
+
+            $('.increment').on('click', function() {
+                let qty = $('.qty').val();
+                let id = $(this).data('id');
+                qty = parseInt(qty) + 1;
+                $('.qty').val(qty);
+                $.ajax({
                     method: 'POST',
-                    url: "{{ route('add-to-cart', ':id') }}".replace(':id', id),
+                    url: "{{ route('update-qty') }}",
                     data: {
                         _token: "{{ csrf_token() }}",
-                        color: color,
-                        qty: qty
+                        qty: qty,
+                        id: id,
+                        type: 'increment'
+                     
                     },
-                    beforeSend: function() {
-                        if (validation()) return false;
+                    success: function(data) {
+                        if (data.status == 'ok') {
+                            $('.cart-count').html(data.cart_count);
+                            window.location.reload();
+                            notyf.success('Product quantity updated.');
+                        }
                     },
-                    success: function(data){
-                       if(data.status == 'ok') {
-                        $('.cart-count').html(data.cart_count);
-                        notyf.success('Product Added To Cart');
-                       }
-                    },
-                    error: function(xhr, status, error){},
-                   })
-                });
-
-                function validation() {
-                    let color = $('.color').val();
-                    console.log(color);
-                    if(color == "") {
-                        notyf.error('Please Select Color');
-                        return true;
-                    }
-
-                    return false;
-                }
-
-                $('.increment').on('click', function() {
-                    let qty = $('.qty').val();
-                    qty = parseInt(qty) + 1;
-                    $('.qty').val(qty);
-                })
-
-                $('.decrement').on('click', function() {
-                    let qty = $('.qty').val();
-                    if(qty > 1) {
-                        qty = parseInt(qty) - 1;
-                        $('.qty').val(qty);
-                    }
+                    error: function(xhr, status, error) {}
                 })
             })
+
+            $('.decrement').on('click', function() {
+                let qty = $('.qty').val();
+                let id = $(this).data('id');
+                if (qty > 1) {
+                    qty = parseInt(qty) - 1;
+                    $('.qty').val(qty);
+                    $.ajax({
+                        method: 'POST',
+                        url: "{{ route('update-qty') }}",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            id: id,
+                            qty: qty ,
+                            type: 'decrement'
+                        },
+                        success: function(data) {
+                            if (data.status == 'ok') {
+                                $('.cart-count').html(data.cart_count);
+                                window.location.reload();
+                                notyf.success('Product quantity updated.');
+                            }
+                        },
+                        error: function(xhr, status, error) {}
+                    })
+                }
+            })
+        })
         </script>
     </x-slot>
 </x-app-layout>
