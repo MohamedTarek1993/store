@@ -77,6 +77,7 @@ class ProductController extends Controller
 
             }
         }
+        notify()->success('Product Created Successfully');
         return redirect()->back();
     }
 
@@ -157,6 +158,7 @@ class ProductController extends Controller
 
             }
         }
+        notify()->success('Product Updated Successfully');
         return redirect()->back();
     }
 
@@ -173,6 +175,7 @@ class ProductController extends Controller
         }
 
         $product->delete();
+        notify()->success('Product Deleted Successfully');
         return redirect()->back();
 
     }
